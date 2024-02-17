@@ -1,0 +1,12 @@
+X:\VS\repos\inui\inui\bin\Debug\inui.exe.config
+X:\VS\repos\inui\inui\bin\Debug\inui.exe
+X:\VS\repos\inui\inui\bin\Debug\inui.pdb
+X:\VS\repos\inui\inui\bin\Debug\IniFileParser.dll
+X:\VS\repos\inui\inui\obj\Debug\inui.csproj.AssemblyReference.cache
+X:\VS\repos\inui\inui\obj\Debug\inui.Form1.resources
+X:\VS\repos\inui\inui\obj\Debug\inui.Properties.Resources.resources
+X:\VS\repos\inui\inui\obj\Debug\inui.csproj.GenerateResource.cache
+X:\VS\repos\inui\inui\obj\Debug\inui.csproj.CoreCompileInputs.cache
+X:\VS\repos\inui\inui\obj\Debug\inui.csproj.CopyComplete
+X:\VS\repos\inui\inui\obj\Debug\inui.exe
+X:\VS\repos\inui\inui\obj\Debug\inui.pdb
