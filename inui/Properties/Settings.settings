@@ -1,7 +1,15 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)">
-  <Profiles>
-    <Profile Name="(Default)" />
-  </Profiles>
-  <Settings />
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="inui.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="Custom_Label_Size" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="Default_Image_Sizing_Mode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">zoom</Value>
+    </Setting>
+    <Setting Name="Default_Ini_Filepath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.\main.ini</Value>
+    </Setting>
+  </Settings>
 </SettingsFile>
