@@ -1,8 +1,26 @@
 # inui
 Create basic, static Windows GUIs with INI files
 
-> [!WARNING]
-> I am aware that there is a problem with string lengths in the INI parser, I am working on a patch.
+## Changelog - v1,1
+
+```diff
++ Added TabControl
++ Added ListBox
++ New controls, new docs
++ Added experimental settings and config in "inui.exe.config"
+- Parser string cutoffs
+- Stub code left from cut features
+```
+
+### Coming Soon...
+
+```ini
+[ Lua Library for transfering values ]
+[ Lua Library for creating GUI elements ]
+
+[ Might change sz.x to width, sz.y to height, pos.x to x, pos.y to y ]
+[ Might change tab construction method to individual definition ] 
+```
 
 # Current Classes
 
@@ -12,7 +30,8 @@ Create basic, static Windows GUIs with INI files
 4. PictureBox
 5. GroupBox
 6. CheckBox
-7. With a few more coming soon...
+7. TabControl
+8. ListBox
 
 ## Window Properties
 
@@ -95,4 +114,27 @@ text=Radio button!
 pos.x=20
 pos.y=40
 parent=group1
+```
+
+## TabControl
+
+```ini
+[TabControl:tbs]
+pos.x=225
+pos.y=25
+sz.x=200
+sz.y=200
+# Tabs separated by commas
+tabs=Tab1,Tab2,Tab3
+```
+
+## ListBox
+
+```ini
+[ListBox:list]
+sz.x=50
+sz.y=180
+pos.x=0
+pos.y=0
+items=This,is,a,selection,box,!
 ```
