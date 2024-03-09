@@ -1,7 +1,15 @@
+<div align="center">
+
+![inui](https://github.com/Dismalitie/inui/assets/118924562/7a0edfdc-7bf1-4253-a1e8-def621dcba26)
+
 # inui
+  
 Create basic, static Windows GUIs with INI files
 
-## Changelog - v1,1
+[![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
+</div>
+
+## Changelog - v1.3
 
 ```diff
 + Added ForeColor params
@@ -45,17 +53,21 @@ window.topmost=true
 [Button:button1]
 text=I am a button!
 # Default for pos is 10
-x=10 
+x=10
 y=10
 width=100
 height=100
-# When clicked, it will run clicked.lua in the res folder
+# Cmd will run on the command line, lua will run with standard PUC-Lua 54 runtime
 onClicked.lua=res\clicked.lua
+onClicked.cmd=echo File made with CMD! > clicked_cmd.txt
+# A RGB value to represent the foreColor, in this case it is the text. Set it to inherit to have the same color as its parent.
+foreColor=255,0,0
 ```
 
 ## Label
 
 ```ini
+[Label:label1]
 text=<-- that is a button!
 x=120
 y=10
@@ -85,6 +97,8 @@ y=220
 x=10
 width=200
 height=100
+# An RGB value for the background color of the control. Change it to inherit and see what happens!
+backColor=0,255,0
 ```
 
 ## CheckBox
