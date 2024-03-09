@@ -16,13 +16,13 @@ namespace inui
     {
         public void setBackColor(IniFile file, string element, Control control)
         {
-            if (file.GetSetting(element, "backcolor", "inherit") == "inherit")
+            if (file.GetSetting(element, "backColor", "inherit") == "inherit")
             {
                 control.BackColor = control.Parent.BackColor;
             }
             else
             {
-                string[] vals = file.GetSetting(element, "backcolor", "inherit").Split(','); // e.g: backcolor=255,255,255 
+                string[] vals = file.GetSetting(element, "backColor", "inherit").Split(','); // e.g: backcolor=255,255,255 
                 int red = int.Parse(vals[0]);
                 int green = int.Parse(vals[1]);
                 int blue = int.Parse(vals[2]);
@@ -33,13 +33,13 @@ namespace inui
 
         public void setForeColor(IniFile file, string element, Control control)
         {
-            if (file.GetSetting(element, "forecolor", "inherit") == "inherit")
+            if (file.GetSetting(element, "foreColor", "inherit") == "inherit")
             {
                 control.ForeColor = control.Parent.ForeColor;
             }
             else
             {
-                string[] vals = file.GetSetting(element, "forecolor", "inherit").Split(',');
+                string[] vals = file.GetSetting(element, "foreColor", "inherit").Split(',');
                 int red = int.Parse(vals[0]);
                 int green = int.Parse(vals[1]);
                 int blue = int.Parse(vals[2]);
