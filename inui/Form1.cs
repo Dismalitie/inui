@@ -1,16 +1,11 @@
 ﻿using SoftCircuits.IniFileParser;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 
 namespace inui
 {
@@ -24,61 +19,16 @@ namespace inui
         List<string> controls_string = new List<string>();
         List<Control> controls_object = new List<Control>();
 
-        void runCmd(string path)
-        {
-            string command = path;
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo();
-            processStartInfo.CreateNoWindow = true;
-            processStartInfo.FileName = "cmd.exe";
-            processStartInfo.Arguments = "/c " + command;
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.UseShellExecute = false;
-            Process process = new Process();
-            process.StartInfo = processStartInfo;
-            process.Start();
-        }
-        void runLua(string file)
-        {
-            string command = Environment.CurrentDirectory + "\\lua\\lua.exe " + file;
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo();
-            processStartInfo.CreateNoWindow = true;
-            processStartInfo.FileName = "cmd.exe";
-            processStartInfo.Arguments = "/c " + command;
-            processStartInfo.RedirectStandardOutput = true;
-            processStartInfo.UseShellExecute = false;
-            Process process = new Process();
-            process.StartInfo = processStartInfo;
-            process.Start();
-        }
-        void runAll(string lua, string cmd) // func nesting or smh lol
-        {
-            runCmd(cmd);
-            runLua(lua);
-        }
-        void runCheckBox(bool state, IniFile file, string element)
-        {
-            runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""));
-            if (state)
-            {
-                runAll(file.GetSetting(element, "onChecked.lua", ""), file.GetSetting(element, "onChecked.cmd", ""));
-            }
-            else
-            {
-                runAll(file.GetSetting(element, "onUnchecked.lua", ""), file.GetSetting(element, "onUnchecked.cmd", ""));
-            }
-        }
+        Funcs f = new Funcs();
 
         private void Form1_Load(object sender, EventArgs e)
         {
             IniFile file = new IniFile();
             file.Load(Properties.Settings.Default.Default_Ini_Filepath);
 
-            MessageBox.Show(" ", "luna - Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.RtlReading);
             Text = file.GetSetting(IniFile.DefaultSectionName, "window.title", "Window");
-            Width = file.GetSetting(IniFile.DefaultSectionName, "window.sz.x", 500);
-            Height = file.GetSetting(IniFile.DefaultSectionName, "window.sz.y", 500);
+            Width = file.GetSetting(IniFile.DefaultSectionName, "window.width", 500);
+            Height = file.GetSetting(IniFile.DefaultSectionName, "window.height", 500);
             TopMost = file.GetSetting(IniFile.DefaultSectionName, "window.topmost", false);
 
             IEnumerable<string> elements = file.GetSections();
@@ -87,7 +37,7 @@ namespace inui
             {
                 if (element.Split(':')[0] == "Button")
                 {
-                    Button button = new Button();
+                    System.Windows.Forms.Button button = new System.Windows.Forms.Button();
                     button.Name = element.Split(':')[1];
                     if (file.GetSetting(element, "parent", "") == "")
                     {
@@ -99,13 +49,16 @@ namespace inui
                     }
 
                     button.Text = file.GetSetting(element, "text", "Button");
-                    button.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
-                    button.Size = new Size(file.GetSetting(element, "sz.x", 75), file.GetSetting(element, "sz.y", 23));
+                    button.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
+                    button.Size = new Size(file.GetSetting(element, "width", 75), file.GetSetting(element, "height", 23));
 
-                    button.Click += (_, __) => runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""));
+                    button.Click += (_, __) => f.runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""));
 
                     controls_string.Add(element.Split(':')[1]);
                     controls_object.Add(button);
+
+                    f.setBackColor(file, element, button);
+                    f.setForeColor(file, element, button);
                 }
                 if (element.Split(':')[0] == "Label")
                 {
@@ -122,15 +75,18 @@ namespace inui
 
                     if (Properties.Settings.Default.Custom_Label_Size)
                     {
-                        label.Size = new Size(file.GetSetting(element, "sz.x", 50), file.GetSetting(element, "sz.y", 10));
+                        label.Size = new Size(file.GetSetting(element, "width", 50), file.GetSetting(element, "height", 10));
                     }
 
                     label.Text = file.GetSetting(element, "text", "Label");
-                    label.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
+                    label.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     label.Size = new Size(label.Text.Length * 5, label.Height);
 
                     controls_string.Add(element.Split(':')[1]);
                     controls_object.Add(label);
+
+                    f.setBackColor(file, element, label);
+                    f.setForeColor(file, element, label);
                 }
                 if (element.Split(':')[0] == "CheckBox")
                 {
@@ -146,10 +102,16 @@ namespace inui
                     }
 
                     chk.Text = file.GetSetting(element, "text", "CheckBox");
-                    chk.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
+                    chk.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     chk.Checked = file.GetSetting(IniFile.DefaultSectionName, "checked", false);
 
-                    chk.CheckedChanged += (_, __) => runCheckBox(chk.Checked, file, element); // checkbox is special, it has its own function
+                    chk.CheckedChanged += (_, __) => f.runCheckBox(chk.Checked, file, element); // checkbox is special, it has its own function
+
+                    controls_string.Add(element.Split(':')[1]);
+                    controls_object.Add(chk);
+
+                    f.setBackColor(file, element, chk);
+                    f.setForeColor(file, element, chk);
                 }
                 if (element.Split(':')[0] == "RadioButton")
                 {
@@ -165,12 +127,15 @@ namespace inui
                     }
 
                     button.Text = file.GetSetting(element, "text", "RadioButton");
-                    button.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
+                    button.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                             
-                    button.Click += (_, __) => runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", "")); // this was a pain at first
+                    button.Click += (_, __) => f.runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", "")); // this was a pain at first
 
                     controls_string.Add(element.Split(':')[1]);
                     controls_object.Add(button);
+
+                    f.setBackColor(file, element, button);
+                    f.setForeColor(file, element, button);
                 }
                 if (element.Split(':')[0] == "GroupBox")
                 {
@@ -179,11 +144,14 @@ namespace inui
                     group.Parent = this;
 
                     group.Text = file.GetSetting(element, "text", "GroupBox");
-                    group.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
-                    group.Size = new Size(file.GetSetting(element, "sz.x", 100), file.GetSetting(element, "sz.y", 100));
+                    group.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
+                    group.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
                     controls_string.Add(element.Split(':')[1]); // parenting system
                     controls_object.Add(group); // actual parenting system
+
+                    f.setBackColor(file, element, group);
+                    f.setForeColor(file, element, group);
                 }
                 if (element.Split(':')[0] == "PictureBox")
                 {
@@ -191,12 +159,12 @@ namespace inui
                     pic.Name = element.Split(':')[1];
                     pic.Parent = this;
 
-                    pic.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
-                    pic.Size = new Size(file.GetSetting(element, "sz.x", 100), file.GetSetting(element, "sz.y", 100));
+                    pic.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
+                    pic.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
                     pic.BackgroundImage = Image.FromFile(file.GetSetting(element, "path", "")); // needs to be background image because that has sizing
 
-                    if (file.GetSetting(element, "sizing", Properties.Settings.Default.Default_Image_Sizing_Mode) == "tile") // sizing because getting the size perfectly right wth sz.x/y is a pain
+                    if (file.GetSetting(element, "sizing", Properties.Settings.Default.Default_Image_Sizing_Mode) == "tile") // sizing because getting the size perfectly right wth width/y is a pain
                     {
                         pic.BackgroundImageLayout = ImageLayout.Tile;
                     }
@@ -215,6 +183,9 @@ namespace inui
 
                     controls_string.Add(element.Split(':')[1]);
                     controls_object.Add(pic);
+
+                    f.setBackColor(file, element, pic);
+                    f.setForeColor(file, element, pic);
                 }
                 if (element.Split(':')[0] == "ListBox")
                 {
@@ -229,8 +200,8 @@ namespace inui
                         list.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
-                    list.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
-                    list.Size = new Size(file.GetSetting(element, "sz.x", 100), file.GetSetting(element, "sz.y", 100));
+                    list.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
+                    list.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
                     string[] strings = file.GetSetting(element, "items", "Item 1,Item 2").Split(',');
 
@@ -239,10 +210,13 @@ namespace inui
                         list.Items.Add(s);
                     }
 
-                    list.SelectedIndexChanged += (_, __) => runAll(file.GetSetting(element, "onSelected.lua", ""), file.GetSetting(element, "onSelected.cmd", "")); // idk how im gonna transfer vals to the lua side
+                    list.SelectedIndexChanged += (_, __) => f.runAll(file.GetSetting(element, "onSelected.lua", ""), file.GetSetting(element, "onSelected.cmd", "")); // idk how im gonna transfer vals to the lua side
 
                     controls_string.Add(element.Split(':')[1]);
                     controls_object.Add(list);
+
+                    f.setBackColor(file, element, list);
+                    f.setForeColor(file, element, list);
                 }
                 if (element.Split(':')[0] == "TabControl")
                 {
@@ -258,21 +232,43 @@ namespace inui
                         tabs.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
-                    tabs.Location = new Point(file.GetSetting(element, "pos.x", 10), file.GetSetting(element, "pos.y", 10));
-                    tabs.Size = new Size(file.GetSetting(element, "sz.x", 100), file.GetSetting(element, "sz.y", 100));
+                    tabs.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
+                    tabs.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
-                    string[] strings = file.GetSetting(element, "tabs", "Tab 1,Tab 2").Split(',');
+                    controls_string.Add(element.Split(':')[1]);
+                    controls_object.Add(tabs);
 
-                    foreach (string s in strings)
+                    f.setBackColor(file, element, tabs);
+                    f.setForeColor(file, element, tabs);
+                }
+                if (element.Split(':')[0] == "TabPage")
+                {
+                    TabPage tab = new TabPage();
+                    tab.Text = file.GetSetting(element, "title", "Tab");
+
+                    if (file.GetSetting(element, "parent", "") == "")
                     {
-                        TabPage tab = new TabPage();
-                        tab.Name = s;
-                        tab.Text = s;
+                        MessageBox.Show("TabPage:" + element.Split(':')[1] + " needs to be parented to a tab!", "inui - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Application.Exit();
+                    }
+                    else
+                    {
+                        if (controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))] is TabControl)
+                        {
+                            TabControl ctrl = (TabControl)controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                            ctrl.TabPages.Add(tab);
+                        }
+                        else
+                        {
+                            MessageBox.Show("TabPage:" + element.Split(':')[1] + " can only be parented to a tab!", "inui - Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Application.Exit();
+                        }
 
-                        tabs.TabPages.Add(tab);
-
-                        controls_string.Add(element.Split(':')[1] + "." + s);
+                        controls_string.Add(controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))].Name + "." + element.Split(':')[1]);
                         controls_object.Add(tab);
+
+                        f.setBackColor(file, element, tab);
+                        f.setForeColor(file, element, tab);
                     }
                 }
             }

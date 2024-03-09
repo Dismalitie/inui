@@ -9,7 +9,7 @@
       <Value Profile="(Default)">zoom</Value>
     </Setting>
     <Setting Name="Default_Ini_Filepath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">.\main.ini</Value>
+      <Value Profile="(Default)">.\res\main.ini</Value>
     </Setting>
   </Settings>
 </SettingsFile>

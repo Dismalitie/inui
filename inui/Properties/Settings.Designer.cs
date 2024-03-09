@@ -49,7 +49,7 @@ namespace inui.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(".\\main.ini")]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\res\\main.ini")]
         public string Default_Ini_Filepath {
             get {
                 return ((string)(this["Default_Ini_Filepath"]));
