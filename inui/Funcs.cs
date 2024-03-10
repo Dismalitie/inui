@@ -22,7 +22,7 @@ namespace inui
             }
             else
             {
-                string[] vals = file.GetSetting(element, "backColor", "inherit").Split(','); // e.g: backcolor=255,255,255 
+                string[] vals = file.GetSetting(element, "backColor", "inherit").Split(','); // e.g: backColor=255,255,255 
                 int red = int.Parse(vals[0]);
                 int green = int.Parse(vals[1]);
                 int blue = int.Parse(vals[2]);

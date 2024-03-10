@@ -60,7 +60,7 @@ namespace inui
                     f.setBackColor(file, element, button);
                     f.setForeColor(file, element, button);
                 }
-                if (element.Split(':')[0] == "Label")
+                else if (element.Split(':')[0] == "Label")
                 {
                     Label label = new Label();
                     label.Name = element.Split(':')[1];
@@ -88,7 +88,7 @@ namespace inui
                     f.setBackColor(file, element, label);
                     f.setForeColor(file, element, label);
                 }
-                if (element.Split(':')[0] == "CheckBox")
+                else if(element.Split(':')[0] == "CheckBox")
                 {
                     CheckBox chk = new CheckBox();
                     chk.Name = element.Split(':')[1];
@@ -113,7 +113,7 @@ namespace inui
                     f.setBackColor(file, element, chk);
                     f.setForeColor(file, element, chk);
                 }
-                if (element.Split(':')[0] == "RadioButton")
+                else if (element.Split(':')[0] == "RadioButton")
                 {
                     RadioButton button = new RadioButton();
                     button.Name = element.Split(':')[1];
@@ -137,7 +137,7 @@ namespace inui
                     f.setBackColor(file, element, button);
                     f.setForeColor(file, element, button);
                 }
-                if (element.Split(':')[0] == "GroupBox")
+                else if (element.Split(':')[0] == "GroupBox")
                 {
                     GroupBox group = new GroupBox();
                     group.Name = element.Split(':')[1];
@@ -153,7 +153,7 @@ namespace inui
                     f.setBackColor(file, element, group);
                     f.setForeColor(file, element, group);
                 }
-                if (element.Split(':')[0] == "PictureBox")
+                else if (element.Split(':')[0] == "PictureBox")
                 {
                     PictureBox pic = new PictureBox();
                     pic.Name = element.Split(':')[1];
@@ -187,7 +187,7 @@ namespace inui
                     f.setBackColor(file, element, pic);
                     f.setForeColor(file, element, pic);
                 }
-                if (element.Split(':')[0] == "ListBox")
+                else if (element.Split(':')[0] == "ListBox")
                 {
                     ListBox list = new ListBox();
                     list.Name = element.Split(':')[1];
@@ -218,7 +218,7 @@ namespace inui
                     f.setBackColor(file, element, list);
                     f.setForeColor(file, element, list);
                 }
-                if (element.Split(':')[0] == "TabControl")
+                else if (element.Split(':')[0] == "TabControl")
                 {
                     TabControl tabs = new TabControl();
                     tabs.Name = element.Split(':')[1];
@@ -235,13 +235,15 @@ namespace inui
                     tabs.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     tabs.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
+                    tabs.SelectedIndexChanged += (_, __) => f.runAll(file.GetSetting(element, "onTabChanged.lua", ""), file.GetSetting(element, "onTabChanged.cmd", ""));
+
                     controls_string.Add(element.Split(':')[1]);
                     controls_object.Add(tabs);
 
                     f.setBackColor(file, element, tabs);
                     f.setForeColor(file, element, tabs);
                 }
-                if (element.Split(':')[0] == "TabPage")
+                else if (element.Split(':')[0] == "TabPage")
                 {
                     TabPage tab = new TabPage();
                     tab.Text = file.GetSetting(element, "title", "Tab");
@@ -266,10 +268,10 @@ namespace inui
 
                         controls_string.Add(controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))].Name + "." + element.Split(':')[1]);
                         controls_object.Add(tab);
-
-                        f.setBackColor(file, element, tab);
-                        f.setForeColor(file, element, tab);
                     }
+
+                    f.setBackColor(file, element, tab);
+                    f.setForeColor(file, element, tab);
                 }
             }
         }

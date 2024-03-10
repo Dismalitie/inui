@@ -6,21 +6,21 @@
   
 Create basic, static Windows GUIs with INI files
 
-[![forthebadge](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
+[![cs](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![foss](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
 </div>
 
-## Changelog - v1.3
+## Changelog - v1.4
 
 ```diff
-+ Added ForeColor params
-+ Added BackColor params
-+ Framework restructure + extensibility
-+ Extracted cluttered functions to a new class
-- width is now width
-- height is now height
-- x is x
-- y is y
-- Reworked tabs for flexibility
++ Updated Docs
++ Fixed TabPage foreColor and backColor bug
++ Minimised package size
++ Optimisations with else ifs
++ Fixed glitchy buttons with long labels
+- Unused tmp folder from cut feature
+- Duplicate PUC-Lua files
+- Unused cross-lang bindings
+- Unused lib references
 ```
 
 # Current Controls
@@ -35,6 +35,29 @@ Create basic, static Windows GUIs with INI files
 8. ListBox
 9. TabPage
 
+## General Properties and Methods
+
+All controls have the following properties:
+1. `width` How tall the control is in pixels.
+2. `height` How tall the control is in pixels.
+3. `x` Where the control is placed on the X axis relevant to it's parent.
+4. `y` Where the control is placed on the Y axis relevant to it's parent.
+5. `parent` The property that defines what the control belongs to. Normally used for parenting to `TabPages` or `GroupBoxes`.
+6. `backColor` The BackColor property of standard WinForms controls. Defines the background color in RGB format (`245,101,101`) **NO SPACES**
+7. `foreColor` The ForeColor property of standard WinForms controls. Usually text.
+
+All properties that consist of two or more words will use camelCase. e.g:
+
+`foreColor`
+`backColor`
+
+All controls follow the same way of defining them:
+```ini
+# (Class) (Name, for parenting) 
+#   ↓       ↓ 
+[Button:button1]
+```
+
 ## Window Properties
 
 ```ini
@@ -48,8 +71,6 @@ window.topmost=true
 ## Button
 
 ```ini
-# Class  Name (for parenting) 
-#  ↓       ↓ 
 [Button:button1]
 text=I am a button!
 # Default for pos is 10
@@ -149,5 +170,6 @@ width=50
 height=180
 x=0
 y=0
+parent=tbs.tab2
 items=This,is,a,selection,box,!
 ```
