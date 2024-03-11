@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Xml.Linq;
 using SoftCircuits.IniFileParser;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Collections.Generic;
+using System.Xml.Linq;
+using System.Collections;
+using System.IO;
 
 namespace inui
 {
     internal class Funcs
     {
+        public List<string> controls_string = new List<string>();
+        public List<Control> controls_object = new List<Control>();
+
         public void setBackColor(IniFile file, string element, Control control)
         {
             if (file.GetSetting(element, "backColor", "inherit") == "inherit")
@@ -63,9 +64,13 @@ namespace inui
             process.Start();
         }
 
-        public void runLua(string file)
+        public void runLua(string file, string[] args)
         {
             string command = Environment.CurrentDirectory + "\\lua\\lua.exe " + file;
+            foreach (string arg in args)
+            {
+                command = command + " " + arg;
+            }
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
             processStartInfo.CreateNoWindow = true;
@@ -78,23 +83,39 @@ namespace inui
             process.Start();
         }
 
-        public void runAll(string lua, string cmd) // func nesting or smh lol
+        public void runAll(string lua, string cmd, string[] luaArgs) // func nesting or smh lol
         {
             runCmd(cmd);
-            runLua(lua);
+            runLua(lua, luaArgs);
         }
 
         public void runCheckBox(bool state, IniFile file, string element)
         {
-            runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""));
+            CheckBox chk = (CheckBox)controls_object[controls_string.IndexOf(element)];
+            string[] args = { chk.Checked.ToString() };
+            string[] nullargs = { "" };
+
+            runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""), args);
             if (state)
             {
-                runAll(file.GetSetting(element, "onChecked.lua", ""), file.GetSetting(element, "onChecked.cmd", ""));
+                runAll(file.GetSetting(element, "onChecked.lua", ""), file.GetSetting(element, "onChecked.cmd", ""), nullargs);
             }
             else
             {
-                runAll(file.GetSetting(element, "onUnchecked.lua", ""), file.GetSetting(element, "onUnchecked.cmd", ""));
+                runAll(file.GetSetting(element, "onUnchecked.lua", ""), file.GetSetting(element, "onUnchecked.cmd", ""), nullargs);
             }
+        }
+
+        public void runListBox(IniFile file, string element, ListBox list)
+        {
+            string[] args = { list.SelectedItem.ToString(), list.SelectedIndex.ToString() };
+            runAll(file.GetSetting(element, "onSelected.lua", ""), file.GetSetting(element, "onSelected.cmd", ""), args);
+        }
+
+        public void runTabControl(IniFile file, string element, TabControl tabs)
+        {
+            string[] args = { tabs.SelectedTab.Text, tabs.SelectedIndex.ToString() };
+            runAll(file.GetSetting(element, "onTabChanged.lua", ""), file.GetSetting(element, "onTabChanged.cmd", ""), args);
         }
     }
 }

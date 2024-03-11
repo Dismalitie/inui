@@ -9,18 +9,13 @@ Create basic, static Windows GUIs with INI files
 [![cs](https://forthebadge.com/images/badges/made-with-c-sharp.svg)](https://forthebadge.com) [![foss](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
 </div>
 
-## Changelog - v1.4
+## Changelog - v1.5
 
 ```diff
-+ Updated Docs
-+ Fixed TabPage foreColor and backColor bug
-+ Minimised package size
-+ Optimisations with else ifs
-+ Fixed glitchy buttons with long labels
-- Unused tmp folder from cut feature
-- Duplicate PUC-Lua files
-- Unused cross-lang bindings
-- Unused lib references
++ C# side can now interact with the Lua side!
++ Added Graphite Installation Hive
++ Completely redid docs! Again...
+- Removed unused stuff
 ```
 
 # Current Controls
@@ -35,40 +30,44 @@ Create basic, static Windows GUIs with INI files
 8. ListBox
 9. TabPage
 
-## General Properties and Methods
+# Control Docs
 
-All controls have the following properties:
-1. `width` How tall the control is in pixels.
-2. `height` How tall the control is in pixels.
-3. `x` Where the control is placed on the X axis relevant to it's parent.
-4. `y` Where the control is placed on the Y axis relevant to it's parent.
-5. `parent` The property that defines what the control belongs to. Normally used for parenting to `TabPages` or `GroupBoxes`.
-6. `backColor` The BackColor property of standard WinForms controls. Defines the background color in RGB format (`245,101,101`) **NO SPACES**
-7. `foreColor` The ForeColor property of standard WinForms controls. Usually text.
+All the documentaion for all the controls, can be found below.
 
-All properties that consist of two or more words will use camelCase. e.g:
+## Button
 
-`foreColor`
-`backColor`
+Just a basic clickable button
 
-All controls follow the same way of defining them:
 ```ini
-# (Class) (Name, for parenting) 
-#   ↓       ↓ 
 [Button:button1]
 ```
 
-## Window Properties
+### Properties
 
-```ini
-# These don't have to be under a section
-window.title=my window
-window.width=500
-window.height=500
-window.topmost=true
-```
+`text` What the button will display as it's label
 
-## Button
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`backColor` The background color of the control
+
+`foreColor` The color of the text
+
+### Events
+
+|Name|args|
+|:---|:---|
+|`onClicked.lua`|❌|
+|`onClicked.cmd`|❌|
+
+### Example Snippet
 
 ```ini
 [Button:button1]
@@ -87,29 +86,153 @@ foreColor=255,0,0
 
 ## Label
 
+Display small snippets of text
+
 ```ini
 [Label:label1]
-text=<-- that is a button!
-x=120
-y=10
 ```
 
-## PictureBox 
+### Properties
+
+`text` What the control will display as it's label
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`backColor` The background color of the control
+
+`foreColor` The color of the text
+
+Has no events.
+
+## CheckBox
+
+A toggleable button I suppose
 
 ```ini
-[PictureBox:picture1]
-x=10
-y=120
-# Image is a square but the sizes are not
-width=200 
-height=100
-# This will zoom the image to a square. others are: tile, stretch, center. try changing it to stretch!
-scaling=zoom 
-# Path to the image, can be a URL
-path=res\woes.png
+[CheckBox:chk1]
+```
+
+### Properties
+
+`text` What the control will display as it's label
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`backColor` The background color of the control
+
+`foreColor` The color of the text
+
+`checked` Whether the `CheckBox` is enabled by default
+
+### Events
+
+|Name|args|
+|:---|:---|
+|`onClicked.lua`|`arg[1]` : checked|
+|`onClicked.cmd`|❌|
+|`onChecked.lua`|❌|
+|`onChecked.cmd`|❌|
+|`onUnchecked.lua`|❌|
+|`onUnchecked.cmd`|❌|
+
+### Example Snippet
+
+```ini
+[CheckBox:chk1]
+text=Is picture cool?
+# Its default state
+checked=true
+x=20
+y=20
+```
+
+## RadioButton
+
+Just a worse version of the button
+
+```ini
+[RadioButton:radbtn1]
+```
+
+### Properties
+
+`text` What the control will display as it's label
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`backColor` The background color of the control
+
+`foreColor` The color of the text
+
+### Events
+
+|Name|args|
+|:---|:---|
+|`onClicked.lua`|❌|
+|`onClicked.cmd`|❌|
+
+### Example Snippet
+
+```ini
+[RadioButton:radbtn1]
+text=Radio button!
+x=20
+y=40
 ```
 
 ## GroupBox
+
+A box to put things in, coming built in with a cool little label
+
+```ini
+[GroupBox:group1]
+```
+
+### Properties
+
+`text` What the control will display as it's label
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`backColor` The background color of the control
+
+`foreColor` The color of the text
+
+Has no events.
+
+### Example Snippet
 
 ```ini
 [GroupBox:group1]
@@ -122,47 +245,80 @@ height=100
 backColor=0,255,0
 ```
 
-## CheckBox
+## PictureBox
+
+Display cool pictures
 
 ```ini
-[CheckBox:chk1]
-text=Is picture cool?
-# Its default state
-checked=true
-x=20
-y=20
-# Checkbox will be inside the group
-parent=group1
+[PictureBox:pic]
 ```
 
-## RadioButton
+### Properties
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`path` The filepath that the image will be loaded from
+
+`sizing` How the image will be sized / scaled if it does not fit correctly
+
+1. `tile` Repeats the image to fill the dimensions
+2. `zoom` Zooms in the image to fill at least one axis
+3. `center` Centers the image
+4. `stretch` Stretches the image to fit the dimensions
+
+Has no events.
+
+### Example Snippet
 
 ```ini
-[RadioButton:radbtn1]
-text=Radio button!
-x=20
-y=40
-parent=group1
-```
-
-## TabControl
-
-```ini
-[TabControl:tbs]
-x=225
-y=25
-width=200
-height=200
-```
-
-## TabPage
-```ini
-[TabPage:tabpage1]
-title=Tab 1!
-parent=tbs # Can only be parented to TabControls
+[PictureBox:picture1]
+x=10
+y=120
+# Image is a square but the sizes are not
+width=100
+height=100
+# This will zoom the image to a square. others are: tile, stretch, center. try changing it to stretch!
+sizing=zoom
+# Path to the image
+path=res\woes.png
 ```
 
 ## ListBox
+
+A list of items to select
+
+```ini
+[ListBox:lst1]
+```
+
+### Properties
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+`items` The items that will be in the list, separated by commas
+
+|Name|args|
+|:---|:---|
+|`onSelected.lua`|`arg[1]` : selected item (text), `arg[1]` : selected item (index)|
+|`onSelected.cmd`|❌|
+
+### Example Snippet
 
 ```ini
 [ListBox:list]
@@ -172,4 +328,73 @@ x=0
 y=0
 parent=tbs.tab2
 items=This,is,a,selection,box,!
+```
+
+## TabControl
+
+A collection of `TabPage`s to choose from
+
+```ini
+[TabControl:tabs1]
+```
+
+### Properties
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to
+
+### Events
+
+|Name|args|
+|:---|:---|
+|`onTabChanged.lua`|`arg[1]` : selected tab (text), `arg[1]` : selected tab (index)|
+|`onTabChanged.cmd`|❌|
+
+### Example Snippet
+
+```ini
+[TabControl:tabs1]
+x=225
+y=25
+width=200
+height=200
+```
+
+## TabPage
+
+A component of the `TabControl`, parent items to it like `tabcontrol.tabpage`
+
+```ini
+[TabPage:tab1]
+```
+
+### Properties
+
+`title` The text that will display on the tabs handle
+
+`x` The position along the X axis relative to its parent
+
+`y` The position along the Y axis relative to its parent
+
+`width` How thicc the control will be
+
+`height` How tall the control will be
+
+`parent` What the control belongs to, can only be parented to `TabControl`s
+
+Has no events.
+
+### Example Snippet
+
+```ini
+[TabPage:tab1]
+title=Tab 1
+parent=tbs
 ```

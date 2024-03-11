@@ -1,11 +1,10 @@
 ﻿using SoftCircuits.IniFileParser;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
+using System.Windows.Forms.VisualStyles;
 
 namespace inui
 {
@@ -16,10 +15,8 @@ namespace inui
             InitializeComponent();
         }
 
-        List<string> controls_string = new List<string>();
-        List<Control> controls_object = new List<Control>();
-
         Funcs f = new Funcs();
+        string[] nullargs = { "" };
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -30,6 +27,7 @@ namespace inui
             Width = file.GetSetting(IniFile.DefaultSectionName, "window.width", 500);
             Height = file.GetSetting(IniFile.DefaultSectionName, "window.height", 500);
             TopMost = file.GetSetting(IniFile.DefaultSectionName, "window.topmost", false);
+            Icon = new Icon(file.GetSetting(IniFile.DefaultSectionName, "window.icon", ".\\inui.ico"));
 
             IEnumerable<string> elements = file.GetSections();
 
@@ -37,7 +35,7 @@ namespace inui
             {
                 if (element.Split(':')[0] == "Button")
                 {
-                    System.Windows.Forms.Button button = new System.Windows.Forms.Button();
+                    Button button = new Button();
                     button.Name = element.Split(':')[1];
                     if (file.GetSetting(element, "parent", "") == "")
                     {
@@ -45,17 +43,17 @@ namespace inui
                     }
                     else
                     {
-                        button.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                        button.Parent = f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
                     button.Text = file.GetSetting(element, "text", "Button");
                     button.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     button.Size = new Size(file.GetSetting(element, "width", 75), file.GetSetting(element, "height", 23));
 
-                    button.Click += (_, __) => f.runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""));
+                    button.Click += (_, __) => f.runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""), nullargs);
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(button);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(button);
 
                     f.setBackColor(file, element, button);
                     f.setForeColor(file, element, button);
@@ -70,7 +68,7 @@ namespace inui
                     }
                     else
                     {
-                        label.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                        label.Parent = f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
                     if (Properties.Settings.Default.Custom_Label_Size)
@@ -82,8 +80,8 @@ namespace inui
                     label.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     label.Size = new Size(label.Text.Length * 5, label.Height);
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(label);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(label);
 
                     f.setBackColor(file, element, label);
                     f.setForeColor(file, element, label);
@@ -98,7 +96,7 @@ namespace inui
                     }
                     else
                     {
-                        chk.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                        chk.Parent = f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
                     chk.Text = file.GetSetting(element, "text", "CheckBox");
@@ -107,8 +105,8 @@ namespace inui
 
                     chk.CheckedChanged += (_, __) => f.runCheckBox(chk.Checked, file, element); // checkbox is special, it has its own function
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(chk);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(chk);
 
                     f.setBackColor(file, element, chk);
                     f.setForeColor(file, element, chk);
@@ -123,16 +121,16 @@ namespace inui
                     }
                     else
                     {
-                        button.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                        button.Parent = f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
                     button.Text = file.GetSetting(element, "text", "RadioButton");
                     button.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                             
-                    button.Click += (_, __) => f.runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", "")); // this was a pain at first
+                    button.Click += (_, __) => f.runAll(file.GetSetting(element, "onClicked.lua", ""), file.GetSetting(element, "onClicked.cmd", ""), nullargs); // this was a pain at first
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(button);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(button);
 
                     f.setBackColor(file, element, button);
                     f.setForeColor(file, element, button);
@@ -147,8 +145,8 @@ namespace inui
                     group.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     group.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
-                    controls_string.Add(element.Split(':')[1]); // parenting system
-                    controls_object.Add(group); // actual parenting system
+                    f.controls_string.Add(element.Split(':')[1]); // parenting system
+                    f.controls_object.Add(group); // actual parenting system
 
                     f.setBackColor(file, element, group);
                     f.setForeColor(file, element, group);
@@ -181,8 +179,8 @@ namespace inui
                         pic.BackgroundImageLayout = ImageLayout.Zoom;
                     }
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(pic);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(pic);
 
                     f.setBackColor(file, element, pic);
                     f.setForeColor(file, element, pic);
@@ -197,7 +195,7 @@ namespace inui
                     }
                     else
                     {
-                        list.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                        list.Parent = f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
                     list.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
@@ -210,10 +208,11 @@ namespace inui
                         list.Items.Add(s);
                     }
 
-                    list.SelectedIndexChanged += (_, __) => f.runAll(file.GetSetting(element, "onSelected.lua", ""), file.GetSetting(element, "onSelected.cmd", "")); // idk how im gonna transfer vals to the lua side
+                    
+                    list.SelectedIndexChanged += (_, __) => f.runListBox(file, element, list);
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(list);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(list);
 
                     f.setBackColor(file, element, list);
                     f.setForeColor(file, element, list);
@@ -229,16 +228,16 @@ namespace inui
                     }
                     else
                     {
-                        tabs.Parent = controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                        tabs.Parent = f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                     }
 
                     tabs.Location = new Point(file.GetSetting(element, "x", 10), file.GetSetting(element, "y", 10));
                     tabs.Size = new Size(file.GetSetting(element, "width", 100), file.GetSetting(element, "height", 100));
 
-                    tabs.SelectedIndexChanged += (_, __) => f.runAll(file.GetSetting(element, "onTabChanged.lua", ""), file.GetSetting(element, "onTabChanged.cmd", ""));
+                    tabs.SelectedIndexChanged += (_, __) => f.runTabControl(file, element, tabs);
 
-                    controls_string.Add(element.Split(':')[1]);
-                    controls_object.Add(tabs);
+                    f.controls_string.Add(element.Split(':')[1]);
+                    f.controls_object.Add(tabs);
 
                     f.setBackColor(file, element, tabs);
                     f.setForeColor(file, element, tabs);
@@ -255,9 +254,9 @@ namespace inui
                     }
                     else
                     {
-                        if (controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))] is TabControl)
+                        if (f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))] is TabControl)
                         {
-                            TabControl ctrl = (TabControl)controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
+                            TabControl ctrl = (TabControl)f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))];
                             ctrl.TabPages.Add(tab);
                         }
                         else
@@ -266,8 +265,8 @@ namespace inui
                             Application.Exit();
                         }
 
-                        controls_string.Add(controls_object[controls_string.IndexOf(file.GetSetting(element, "parent", ""))].Name + "." + element.Split(':')[1]);
-                        controls_object.Add(tab);
+                        f.controls_string.Add(f.controls_object[f.controls_string.IndexOf(file.GetSetting(element, "parent", ""))].Name + "." + element.Split(':')[1]);
+                        f.controls_object.Add(tab);
                     }
 
                     f.setBackColor(file, element, tab);

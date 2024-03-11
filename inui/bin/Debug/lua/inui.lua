@@ -1,32 +1,44 @@
-local lib = {}
+---@diagnostic disable: need-check-nil
+---@runtime priority: lib > this
 
-function lib:get(control)
-    local file = io.open(".\\tmp\\"..control)
-    if file == nil then error("Could not get value of "..control.."!") end
-    return file:read("a")
-end
-
-function lib:set(control, value)
-    local file = io.open(".\\tmp\\"..control)
-    if file == nil then error("Could not set value of "..control.."!") end
-    file:write(value)
-    file:flush()
-end
+-- do not ship, not ready yet!
+_G.lib =
+{
+    gui = {},
+    long = io.open(".\\lib.eventBinds\\.lib.long", "w"),
+    ev = io.open(".\\lib.eventBinds\\.lib.event", "w")
+}
 
 function lib:exit()
-    local file = io.open(".\\.event")
-    if file == nil then error("Could not find the communication file") end
-    file:write("exit")
-    file:flush()
+    lib.lib.ev:write("exit")
+    lib.ev:close()
 end
 
-function lib:dlg(text, title, type)
-    local file = io.open(".\\.event")
-    if file == nil then error("Could not find the communication file") end
-    file:write(text.."|"..title.."|"..type) -- this is a sin
-    file:flush()
-    file:close()
-    print(io.read("a", ".\\.event"))
+function lib:min()
+    lib.ev:write("min")
+    lib.ev:close()
+end
+
+function lib:max()
+    lib.ev:write("max")
+    lib.ev:close()
+end
+
+function lib:dlg(type, desc)
+    lib.ev:write("dlg "..type)
+    lib.ev:close()
+    lib.long:write(desc)
+    lib.long:close()
+end
+
+function lib.gui:move(ctrl, x, y)
+    lib.ev:write("move "..ctrl.." "..x.." "..y)
+    lib.ev:close()
+end
+
+function lib.gui:set(ctrl, x, y)
+    lib.ev:write("set "..ctrl.." "..x.." "..y)
+    lib.ev:close()
 end
 
 return lib
